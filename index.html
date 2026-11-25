@@ -80,9 +80,13 @@ nav.tabbar button[aria-selected="true"]{color:var(--accent)}
 .check{width:44px;height:44px;display:grid;place-items:center}
 .check span{width:24px;height:24px;border-radius:50%;border:2px solid var(--c,var(--muted));display:grid;place-items:center;transition:background .15s}
 .check span svg{width:14px;height:14px;opacity:0;color:#fff}
-.check:active span,.check.ticked span{background:var(--c)}
+.check:active span,.check.ticked span{background:var(--ok);border-color:var(--ok)}
+.item.done .t{color:var(--muted)}
+.item .del{width:44px;height:44px;display:grid;place-items:center;color:var(--muted)}
+.item .del svg{width:20px;height:20px}
+.item .del:active{color:var(--late)}
 .check.ticked span svg{opacity:1}
-.check[disabled] span{border-style:dashed;opacity:.6}
+.check.nodate span{border-style:dashed;opacity:.6}
 .item .main{min-width:0;text-align:left;display:flex;flex-direction:column;gap:2px;padding:4px 0}
 .item .t{font-weight:600;overflow-wrap:anywhere}
 .item .sub{font-size:13px;color:var(--muted);display:flex;flex-wrap:wrap;gap:2px 8px;align-items:center}
@@ -153,6 +157,17 @@ nav.tabbar button[aria-selected="true"]{color:var(--accent)}
 .grabber{width:36px;height:5px;border-radius:3px;background:var(--line);margin:8px auto 0}
 .sheet-body{overflow-y:auto;padding:8px max(16px,env(safe-area-inset-right,0px)) calc(24px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:14px;-webkit-overflow-scrolling:touch}
 .sheet-body > *{flex-shrink:0}
+.sheet-foot{padding:10px max(16px,env(safe-area-inset-right,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));border-top:1px solid var(--line);background:var(--bg)}
+.sheet:has(.sheet-foot) .sheet-body{padding-bottom:16px}
+.quick{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.quick button{height:32px;border-radius:16px;padding:0 12px;background:var(--surface-2);font-size:14px;font-weight:600}
+details.more{background:var(--surface);border-radius:var(--r);padding:0 14px}
+details.more summary{list-style:none;cursor:pointer;padding:13px 0;font-weight:600;color:var(--accent);display:flex;justify-content:space-between}
+details.more summary::-webkit-details-marker{display:none}
+details.more summary::after{content:"+";font-size:20px;line-height:1}
+details.more[open] summary::after{content:"–"}
+details.more[open]{padding-bottom:14px}
+details.more > .f + .f{margin-top:14px}
 @keyframes up{from{transform:translateY(100%)}to{transform:none}}
 @keyframes fade{from{opacity:0}to{opacity:1}}
 @media (prefers-reduced-motion:reduce){.scrim,.sheet{animation:none}}
@@ -189,6 +204,13 @@ nav.tabbar button[aria-selected="true"]{color:var(--accent)}
 .onb p.lead{margin:0;font-size:17px;color:var(--muted)}
 .onb .steps{font-size:13px;font-weight:700;color:var(--accent);letter-spacing:.04em;text-transform:uppercase}
 .onb .foot{margin-top:auto;display:flex;flex-direction:column;gap:8px;padding-top:12px;position:sticky;bottom:0;background:linear-gradient(to bottom,transparent,var(--bg) 18px);padding-bottom:calc(env(safe-area-inset-bottom,0px) + 8px)}
+.choices{display:flex;flex-direction:column;gap:10px}
+.choices button{display:flex;align-items:center;gap:14px;text-align:left;background:var(--surface);border:2px solid transparent;border-radius:var(--r);padding:14px 16px;min-height:64px}
+.choices button svg{width:24px;height:24px;color:var(--accent);flex:none}
+.choices button b{display:block;font-size:17px}
+.choices button small{display:block;color:var(--muted);font-size:14px;margin-top:2px}
+.choices button[aria-checked="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.btn[disabled]{opacity:.4}
 .situ{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .situ button{background:var(--surface);border-radius:var(--r);padding:14px 12px;min-height:84px;display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;gap:8px;text-align:left;font-weight:600;font-size:15px;line-height:1.2;border:2px solid transparent}
 .situ button svg{width:24px;height:24px;color:var(--c)}
@@ -243,59 +265,9 @@ nav.tabbar button[aria-selected="true"]{color:var(--accent)}
 .toggle{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .toggle input{width:22px;height:22px;accent-color:var(--accent)}
 
-/* ---------- Bons plans : langage visuel « ticket » distinct des domaines ---------- */
-:root{ --deal-a:#ffb85c; --deal-b:#ff7657; --deal-ink:#2b1306; --deal-soft:#fff1e6;
-  --dc-voyage:#2c6fb8; --dc-sport:#2f7d6d; --dc-culture:#8a5ca8; --dc-event:#d0457a; --dc-aide:#c2571a; --dc-shopping:#a86500; --d-bonsplans:#e8623f; }
-@media (prefers-color-scheme: dark){ :root{ --deal-a:#c9772a; --deal-b:#b8452f; --deal-ink:#fff4ea; --deal-soft:#33221a; --d-bonsplans:#ff8a66; } }
-.ticket{position:relative;display:grid;grid-template-columns:1fr auto;align-items:center;gap:14px;width:100%;text-align:left;padding:18px 18px 18px 22px;border-radius:16px;background:linear-gradient(115deg,var(--deal-a),var(--deal-b));color:var(--deal-ink);margin-bottom:16px;overflow:hidden}
-.ticket::before,.ticket::after{content:"";position:absolute;width:22px;height:22px;border-radius:50%;background:var(--bg);right:86px}
-.ticket::before{top:-11px}.ticket::after{bottom:-11px}
-.ticket .stamp{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;opacity:.8}
-.ticket .big{font-family:var(--f-round);font-size:26px;font-weight:800;line-height:1.05;letter-spacing:-.01em}
-.ticket .sm{font-size:13.5px;font-weight:600;opacity:.9;margin-top:4px}
-.ticket .stub{border-left:2px dashed color-mix(in srgb,var(--deal-ink) 40%,transparent);padding-left:16px;width:86px;display:flex;flex-direction:column;align-items:center;gap:2px}
-.ticket .stub b{font-family:var(--f-round);font-size:30px;line-height:1}
-.ticket .stub span{font-size:11px;font-weight:700;text-align:center;line-height:1.15}
-.dealhead{margin:-8px -16px 14px;padding:calc(env(safe-area-inset-top,0px)*0 + 6px) 16px 20px;background:linear-gradient(115deg,var(--deal-a),var(--deal-b));color:var(--deal-ink);border-radius:0 0 22px 22px}
-.dealhead .topbar .back{color:var(--deal-ink)}
-.dealhead .topbar .iconbtn{background:color-mix(in srgb,var(--deal-ink) 14%,transparent);color:var(--deal-ink)}
-.dealhead h1{font-family:var(--f-round);font-size:34px;font-weight:800;margin:4px 0 4px;letter-spacing:-.02em}
-.dealhead p{margin:0;font-weight:600;opacity:.9}
-.dseg{display:grid;grid-template-columns:repeat(3,1fr);background:color-mix(in srgb,var(--deal-ink) 12%,transparent);border-radius:12px;padding:3px;margin-top:14px}
-.dseg button{height:34px;border-radius:9px;font-weight:700;font-size:14px;color:var(--deal-ink)}
-.dseg button[aria-pressed="true"]{background:var(--surface);color:var(--ink)}
-.coupon{position:relative;display:grid;grid-template-columns:58px minmax(0,1fr);background:var(--surface);border-radius:14px;overflow:hidden}
-.coupon + .coupon{margin-top:12px}
-.coupon .lft{background:var(--c);color:#fff;display:flex;align-items:flex-start;justify-content:center;padding-top:16px}
-.coupon .lft svg{width:26px;height:26px}
-.coupon::before,.coupon::after{content:"";position:absolute;left:49px;width:18px;height:18px;border-radius:50%;background:var(--bg)}
-.coupon::before{top:-9px}.coupon::after{bottom:-9px}
-.coupon .bd{padding:13px 14px 12px;border-left:2px dashed var(--line);display:flex;flex-direction:column;gap:6px;min-width:0}
-.coupon .tt{font-weight:700;font-size:16.5px;line-height:1.25}
-.coupon .tags{display:flex;flex-wrap:wrap;gap:5px}
 .tagp{font-size:11.5px;font-weight:700;padding:3px 8px;border-radius:8px;background:var(--surface-2);color:var(--muted);white-space:nowrap}
-.tagp.u26{background:var(--deal-soft);color:var(--d-bonsplans)}
 .tagp.hot{background:var(--late-soft);color:var(--late)}
 .tagp.ok{background:var(--ok-soft);color:var(--ok)}
-.coupon .tx{font-size:14.5px;margin:0}
-.coupon .tx ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:3px}
-.coupon .cav{font-size:13px;background:var(--soon-soft);color:var(--ink);border-radius:8px;padding:7px 9px;margin:0}
-.coupon .src{font-size:12px;color:var(--muted);margin:0}
-.coupon .act{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:2px}
-.coupon .act .btn{height:34px;font-size:14px;border-radius:9px;padding:0 12px}
-.coupon .act .btn.go{background:var(--d-bonsplans);color:#fff}
-.code{display:inline-flex;align-items:center;gap:8px;border:2px dashed var(--d-bonsplans);border-radius:8px;padding:4px 10px;font-family:ui-monospace,Menlo,monospace;font-weight:700;letter-spacing:.06em}
-.u26bar{background:var(--deal-soft);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
-.u26bar b{font-size:16px}
-.u26bar .meter{height:8px;border-radius:4px;background:color-mix(in srgb,var(--d-bonsplans) 20%,transparent);overflow:hidden}
-.u26bar .meter i{display:block;height:100%;background:var(--d-bonsplans);border-radius:4px}
-.tips{background:var(--surface);border-radius:14px;padding:4px 14px}
-.tips div{padding:11px 0;display:grid;grid-template-columns:22px 1fr;gap:10px;font-size:14.5px}
-.tips div + div{border-top:1px solid var(--line)}
-.tips svg{width:20px;height:20px;color:var(--d-bonsplans);margin-top:1px}
-.multi{display:flex;flex-wrap:wrap;gap:6px;padding-top:6px}
-.multi button{height:34px;border-radius:17px;padding:0 12px;background:var(--surface-2);font-size:14px}
-.multi button[aria-pressed="true"]{background:var(--d-bonsplans);color:#fff}
 
 /* ---------- Candidatures ---------- */
 :root{ --st-todo:var(--muted); --st-sent:var(--accent); --st-interview:var(--soon); --st-yes:var(--ok); --st-no:var(--late); }
@@ -437,6 +409,7 @@ const TPL = [
   {id:"caftrim",d:"famille",t:"CAF : déclaration trimestrielle de ressources",r:3,s:["caf"],note:"Si tu perçois le RSA ou la prime d'activité."},
   {id:"cafchg",d:"famille",t:"Signaler un changement de situation à la CAF",r:0,s:["caf"],note:"Déménagement, naissance, séparation, nouveau travail…"},
   {id:"rentree",d:"famille",t:"Rentrée : assurance scolaire, cantine, périscolaire",r:12,md:"09-01",s:["enfants"]},
+  {id:"actu",d:"chomage",t:"M'actualiser sur France Travail (avant le 15)",r:1,s:["are"],note:"Chaque mois, du 28 au 15 du mois suivant (du 26 en février). Sans actualisation, tes allocations sont suspendues. Signale aussi tout changement (reprise d'emploi, formation, arrêt maladie) sans attendre. Source : francetravail.fr, actualisation mensuelle."},
   {id:"paie",d:"travail",t:"Classer ses bulletins de salaire",r:1,s:["salarie"],note:"À garder jusqu'à ta retraite."},
   {id:"carriere",d:"travail",t:"Vérifier son relevé de carrière",r:12,s:["salarie"],note:"Sur info-retraite.fr."},
   {id:"assurpoint",d:"assurances",t:"Faire le point sur ses contrats d'assurance",r:12,s:["base"],note:"Doublons ? Garanties à jour ?"},
@@ -452,8 +425,33 @@ const SITUATIONS = [
   {k:"enfants",n:"J'ai des enfants scolarisés",i:"famille",c:"famille"},
   {k:"credit",n:"J'ai un crédit immobilier",i:"banque",c:"banque"},
   {k:"passeport",n:"J'ai un passeport",i:"plane",c:"identite"},
-  {k:"csp",n:"Je suis en licenciement économique (CSP)",i:"chomage",c:"chomage"},
 ];
+/* Questionnaire de départ : situation pro + recherche d'emploi */
+const STATUTS = [
+  {k:"salarie",n:"En poste",s:"CDI, CDD, intérim",i:"travail"},
+  {k:"csp",n:"Licenciement économique avec CSP",s:"Contrat de sécurisation professionnelle",i:"chomage"},
+  {k:"are",n:"Au chômage",s:"Fin de contrat, rupture conventionnelle, licenciement…",i:"chomage"},
+  {k:"inde",n:"Indépendant·e ou freelance",s:"Micro-entreprise, portage…",i:"key"},
+  {k:"etudiant",n:"Étudiant·e ou alternant·e",s:"",i:"list"},
+  {k:"autre",n:"Autre situation",s:"",i:"home"},
+];
+const RECHERCHES = [
+  {k:"oui",n:"Oui, je cherche activement",s:"L'onglet Candidatures suit tes candidatures et tes entretiens."},
+  {k:"veille",n:"Je reste à l'écoute",s:"Candidatures reste disponible, sans pression."},
+  {k:"non",n:"Non, pas en ce moment",s:"L'onglet est masqué. Tu pourras le réactiver dans Réglages."},
+];
+const isChomeur = st => st==="csp"||st==="are";
+function profil(){ return DB.settings.profil||{}; }
+/* Applique le profil à l'interface : nom et visibilité du domaine Chômage */
+function applyProfil(){
+  const st=profil().statut;
+  DOM.chomage.n = st==="are" ? "Chômage" : "Chômage & CSP";
+}
+function visibleDomains(){
+  const st=profil().statut;
+  const showCh = !st || isChomeur(st) || DB.items.some(x=>x.domain==="chomage") || !!DB.settings.csp;
+  return DOMAINS.filter(d=>d.k!=="chomage"||showCh);
+}
 
 /* Durées de conservation — service-public.gouv.fr F19134, vérifié le 18 nov. 2026 */
 const KEEP = [
@@ -499,7 +497,7 @@ const uid = () => Date.now().toString(36)+Math.random().toString(36).slice(2,8);
 /* ======================= Données (sur le téléphone) ======================= */
 const KEY = "mon-classeur-v1";
 let DB = { items:[], docs:[], notes:[], jobs:[], deals:[], settings:{ onboarded:false, lastBackup:null, csp:null, hideJobs:false } };
-function load(){ try{ const j=JSON.parse(localStorage.getItem(KEY)||"null"); if(j){ DB.items=j.items||[]; DB.docs=j.docs||[]; DB.notes=j.notes||[]; DB.jobs=j.jobs||[]; DB.deals=j.deals||[]; DB.settings={...DB.settings,...(j.settings||{})}; } }catch(e){} }
+function load(){ try{ const j=JSON.parse(localStorage.getItem(KEY)||"null"); if(j){ DB.items=j.items||[]; DB.docs=j.docs||[]; DB.notes=j.notes||[]; DB.jobs=j.jobs||[]; DB.deals=j.deals||[]; DB.settings={...DB.settings,...(j.settings||{})}; DB.items=DB.items.filter(x=>x.domain!=="bonsplans"); } }catch(e){} applyProfil(); }
 function persist(){ try{ localStorage.setItem(KEY, JSON.stringify(DB)); }catch(e){ toast("Impossible d'enregistrer : la mémoire du téléphone est peut-être pleine."); } updateBadge(); }
 function upsert(kind,obj){ const o={...obj, id:obj.id||uid(), updatedAt:iso(new Date())}; const i=DB[kind].findIndex(x=>x.id===o.id); if(i>=0) DB[kind][i]=o; else DB[kind].push(o); persist(); return o; }
 function remove(kind,id){ DB[kind]=DB[kind].filter(x=>x.id!==id); persist(); }
@@ -614,9 +612,10 @@ function updateBadge(){
 function render(){
   const root=$("#root");
   if(!DB.settings.onboarded){ root.innerHTML=renderOnboarding(); return; }
-  const views={home:viewHome,domains:viewDomains,docs:viewDocs,settings:viewSettings,domain:viewDomain,jobs:viewJobs,deals:viewDeals};
+  const views={home:viewHome,domains:viewDomains,docs:viewDocs,settings:viewSettings,domain:viewDomain,jobs:viewJobs};
   if(UI.tab==="jobs" && DB.settings.hideJobs) UI.tab="home";
-  const navTab = (UI.tab==="domain"||UI.tab==="deals") ? "domains" : UI.tab;
+  if(!views[UI.tab]) UI.tab="home";
+  const navTab = UI.tab==="domain" ? "domains" : UI.tab;
   const late=buckets().late.length;
   const active=document.activeElement, wasQ=active&&active.id==="q", pos=wasQ?active.selectionStart:0;
   const tabs=[["home","À venir","list"],...(DB.settings.hideJobs?[]:[["jobs","Candidatures","travail"]]),["domains","Domaines","grid"],["docs","Documents","folder"],["settings","Réglages","gear"]];
@@ -634,13 +633,13 @@ function itemRow(x){
   const n=x.due?daysTo(x.due):null, cls=n===null?"":n<0?"late":n<=30?"soon":"";
   const d=DOM[x.domain]||{n:"Autre"};
   return `<div class="item ${cls}" style="--c:var(--d-${esc(x.domain)})">
-    <button class="check" data-done="${esc(x.id)}" ${x.due?"":"disabled"} aria-label="${x.due?"Marquer comme fait":"Pas encore de date"}"><span>${ico("check",'stroke-width="3"')}</span></button>
+    <button class="check ${x.due?"":"nodate"}" ${x.due?`data-done="${esc(x.id)}"`:`data-open="${esc(x.id)}"`} aria-label="${x.due?"Marquer comme fait":"Ajouter une date"}"><span>${ico("check",'stroke-width="3"')}</span></button>
     <button class="main" data-open="${esc(x.id)}"><span class="t">${esc(x.title)}</span><span class="sub"><span class="dom">${esc(d.n)}</span>${x.repeat?`<span>${esc(repLabel(x.repeat))}</span>`:""}${x.amount?`<span>${esc(x.amount)} €</span>`:""}</span></button>
     <button class="when" data-open="${esc(x.id)}">${x.due?`<b>${esc(rel(x.due))}</b>${esc(fmt(x.due,{day:"numeric",month:"short"}))}`:`<b class="muted">À dater</b>`}</button>
   </div>`;
 }
 function filt(arr){ const q=UI.q.trim().toLowerCase(); return arr.filter(x=>(UI.dom==="all"||x.domain===UI.dom)&&(!q||[x.title,x.note,x.where].join(" ").toLowerCase().includes(q))); }
-function chips(){ return `<div class="chips" role="group" aria-label="Filtrer par domaine"><button class="chip" data-dom="all" aria-pressed="${UI.dom==="all"}">Tout</button>${DOMAINS.map(d=>`<button class="chip" data-dom="${d.k}" aria-pressed="${UI.dom===d.k}" style="--c:var(--d-${d.k})"><span class="dot"></span>${esc(d.n)}</button>`).join("")}</div>`; }
+function chips(){ return `<div class="chips" role="group" aria-label="Filtrer par domaine"><button class="chip" data-dom="all" aria-pressed="${UI.dom==="all"}">Tout</button>${visibleDomains().map(d=>`<button class="chip" data-dom="${d.k}" aria-pressed="${UI.dom===d.k}" style="--c:var(--d-${d.k})"><span class="dot"></span>${esc(d.n)}</button>`).join("")}</div>`; }
 function searchBox(ph){ return `<label class="search">${ico("search")}<input id="q" type="search" placeholder="${ph}" value="${esc(UI.q)}" autocomplete="off"></label>`; }
 
 function backupWarn(){
@@ -651,6 +650,10 @@ function backupWarn(){
   return `<div class="warn"><span>${days===null?"Tu n'as jamais sauvegardé tes données.":`Dernière sauvegarde il y a ${days} jours.`}</span><button data-act="backup">Sauvegarder</button></div>`;
 }
 
+const DONE_DAYS = 30; // les tâches terminées restent visibles 30 jours dans « À venir »
+function doneRow(x){
+  return `<div class="item done" style="--c:var(--d-${esc(x.domain)})"><span class="check ticked"><span>${ico("check",'stroke-width="3"')}</span></span><button class="main" data-open="${esc(x.id)}"><span class="t">${esc(x.title)}</span><span class="sub">Fait le ${esc(fmt(x.lastDone))}</span></button><button class="del" data-del-done="${esc(x.id)}" aria-label="Supprimer « ${esc(x.title)} »">${ico("trash")}</button></div>`;
+}
 function viewHome(){
   const B=buckets();
   let h = topbar() + `<h1 class="large">À venir</h1>` + backupWarn();
@@ -658,19 +661,36 @@ function viewHome(){
     return h + `<div class="empty"><p>Aucune échéance pour l'instant. Ajoute-en une, ou choisis parmi les modèles (contrôle technique, déclaration d'impôts, mutuelle…).</p>
       <button class="btn primary" data-act="templates">Choisir des modèles</button><button class="linkbtn" data-act="add-item">Créer une échéance</button></div>`;
   }
-  h += `<div class="hero">
-    <button class="late" data-scroll="g-late"><b>${B.late.length}</b><span>en retard</span></button>
-    <button class="soon" data-scroll="g-soon"><b>${B.soon.length}</b><span>sous 30 jours</span></button>
-    <button data-scroll="g-undated"><b>${B.undated.length}</b><span>à dater</span></button></div>`;
-  if(!B.late.length && !B.soon.length) h += `<div class="allgood" style="margin-top:10px">Rien d'urgent ce mois-ci.</div>`;
-  { const hot=SUGG.filter(s=>suggOk(s)&&(s.hot||(s.start&&daysTo(s.start)<=10))).length + dealsSoon().length;
-    if(hot) h += `<button class="ticket" data-act="open-deals" style="margin:12px 0 0;padding:14px 18px 14px 20px"><span><span class="stamp">Bons plans</span><span class="sm" style="display:block;font-size:15px;margin-top:2px">${hot} à saisir rapidement</span></span><span class="stub" style="width:70px"><b style="font-size:24px">${hot}</b></span></button>`; }
-  if(DB.settings.csp){
-    const nx=DB.items.filter(x=>x.domain==="chomage"&&!x.done&&x.due).sort((a,b)=>a.due.localeCompare(b.due))[0];
-    const miss=DB.docs.filter(x=>x.domain==="chomage"&&!x.where).length;
-    h += `<button class="cspcard" data-goto="chomage"><span class="k">Mon parcours CSP</span><span class="t">${nx?esc(nx.title):"Toutes les étapes sont faites"}</span><span class="s">${nx?esc(fmt(nx.due))+" · "+esc(rel(nx.due)):""}${miss?` · ${miss} papier(s) à récupérer`:""}</span></button>`;
+  const openN=B.late.length+B.soon.length+B.quarter.length+B.later.length+B.undated.length;
+  const recentDone=DB.items.filter(x=>x.done&&x.lastDone&&daysTo(x.lastDone)>=-DONE_DAYS).sort((a,b)=>(b.lastDone||"").localeCompare(a.lastDone||""));
+
+  /* ---- Vue simple : l'essentiel du mois ---- */
+  if(!UI.homeAll){
+    const month=[...B.late,...B.soon];
+    if(month.length){
+      const shown=UI.homeMore?month:month.slice(0,5);
+      h += `<h2 class="sect">Ce mois-ci <span class="n">${month.length}</span></h2>`;
+      if(B.late.length) h += `<p class="small" style="margin:-4px 4px 8px;color:var(--late);font-weight:600">${B.late.length} en retard</p>`;
+      h += `<div class="list">${shown.map(itemRow).join("")}</div>`;
+      if(month.length>5) h += `<button class="linkbtn" data-act="home-more" style="display:block;margin:4px auto 0">${UI.homeMore?"Voir moins":`Voir plus (${month.length-5})`}</button>`;
+    } else {
+      const next=[...B.quarter,...B.later].slice(0,3);
+      h += `<div class="allgood" style="margin-top:6px">Rien à faire ce mois-ci.</div>`;
+      if(next.length) h += `<h2 class="sect">Ensuite</h2><div class="list">${next.map(itemRow).join("")}</div>`;
+    }
+    if(DB.settings.csp){
+      const nx=DB.items.filter(x=>x.domain==="chomage"&&!x.done&&x.due).sort((a,b)=>a.due.localeCompare(b.due))[0];
+      const miss=DB.docs.filter(x=>x.domain==="chomage"&&!x.where).length;
+      h += `<button class="cspcard" data-goto="chomage" style="margin-top:18px"><span class="k">Mon parcours CSP</span><span class="t">${nx?esc(nx.title):"Toutes les étapes sont faites"}</span><span class="s">${nx?esc(fmt(nx.due))+" · "+esc(rel(nx.due)):""}${miss?` · ${miss} papier(s) à récupérer`:""}</span></button>`;
+    }
+    h += `<button class="btn block" data-act="home-all" style="margin-top:18px">Toutes mes échéances (${openN})</button>`;
+    if(B.undated.length) h += `<p class="small muted" style="text-align:center;margin:8px 0 0">Dont ${B.undated.length} sans date</p>`;
+    return h;
   }
-  h += `<div style="margin-top:14px">${searchBox("Rechercher")}${chips()}</div>`;
+
+  /* ---- Vue complète ---- */
+  h += `<button class="linkbtn" data-act="home-simple" style="margin:-6px 0 4px">‹ Retour à l'essentiel</button>`;
+  h += `<div>${searchBox("Rechercher")}${chips()}</div>`;
   const G=[["g-late","En retard",B.late],["g-soon","Dans les 30 jours",B.soon],["g-quarter","Dans les 3 mois",B.quarter],["g-later","Plus tard",B.later],["g-undated","À dater",B.undated]];
   let any=false;
   for(const [id,label,arr0] of G){ const arr=filt(arr0); if(!arr.length) continue; any=true;
@@ -678,13 +698,13 @@ function viewHome(){
     if(id==="g-undated") h += `<p class="small muted" style="margin:-4px 4px 8px">Touche une ligne pour lui donner une date.</p>`;
     h += `<div class="list">${arr.map(itemRow).join("")}</div>`; }
   if(!any) h += `<div class="empty" style="margin-top:14px"><p>Rien pour ce filtre.</p></div>`;
-  const done=filt(DB.items.filter(x=>x.done));
-  if(done.length) h += `<h2 class="sect">Terminées <span class="n">${done.length}</span></h2><div class="list">${done.map(x=>`<div class="item" style="--c:var(--d-${esc(x.domain)})"><span class="check ticked"><span>${ico("check",'stroke-width="3"')}</span></span><button class="main" data-open="${esc(x.id)}"><span class="t">${esc(x.title)}</span><span class="sub">Fait le ${esc(fmt(x.lastDone))}</span></button><span></span></div>`).join("")}</div>`;
+  const done=filt(recentDone);
+  if(done.length) h += `<h2 class="sect">Terminées <span class="n">${done.length}</span></h2><p class="small muted" style="margin:-4px 4px 8px">Elles disparaissent d'ici au bout de ${DONE_DAYS} jours et restent dans l'espace du domaine.</p><div class="list">${done.map(doneRow).join("")}</div>`;
   return h;
 }
 
 function viewDomains(){
-  return topbar() + `<h1 class="large">Domaines</h1>${dealTicket()}<div class="domgrid">${DOMAINS.map(d=>{
+  return topbar() + `<h1 class="large">Domaines</h1><div class="domgrid">${visibleDomains().map(d=>{
     const its=DB.items.filter(x=>x.domain===d.k&&!x.done), late=its.filter(x=>x.due&&daysTo(x.due)<0).length;
     const nx=its.filter(x=>x.due).sort((a,b)=>a.due.localeCompare(b.due))[0];
     return `<button class="dtile ${d.k==="loisirs"?"wide":""}" data-goto="${d.k}" style="--c:var(--d-${d.k})"><span class="ico">${ico(d.k)}</span><span class="nm">${esc(d.n)}</span>
@@ -693,13 +713,7 @@ function viewDomains(){
 
 function viewDocs(){
   let h = topbar() + `<h1 class="large">Documents</h1>
-    <div class="segmented seg3" role="group"><button data-seg="mine" aria-pressed="${UI.docSeg==="mine"}">Papiers</button><button data-seg="notes" aria-pressed="${UI.docSeg==="notes"}">Notes</button><button data-seg="keep" aria-pressed="${UI.docSeg==="keep"}">Durées</button></div>`;
-  if(UI.docSeg==="notes"){
-    const list=filt(DB.notes.map(n=>({...n, where:n.body}))).sort((a,b)=>(b.date||"").localeCompare(a.date||""));
-    if(!DB.notes.length) return h + `<div class="empty"><p>Garde ici les récaps de tes rendez-vous (France Travail, banque, notaire…), un numéro de dossier, le nom d'un interlocuteur.</p>
-      <button class="btn primary" data-act="add-note-rdv">Récap de RDV France Travail</button><button class="linkbtn" data-act="add-note">Note libre</button></div>`;
-    return h + searchBox("Rechercher dans mes notes") + chips() + `<div style="display:flex;gap:8px;margin:4px 0 10px"><button class="btn small primary" data-act="add-note-rdv">+ Récap de RDV</button><button class="btn small" data-act="add-note">+ Note libre</button></div>` + notesList(list);
-  }
+    <div class="segmented" role="group"><button data-seg="mine" aria-pressed="${UI.docSeg!=="keep"}">Mes papiers</button><button data-seg="keep" aria-pressed="${UI.docSeg==="keep"}">Combien de temps garder</button></div>`;
   if(UI.docSeg==="keep"){
     return h + `<div class="list keep">${KEEP.map(([k,p,v])=>`<div class="row" style="--c:var(--d-${k})"><b>${esc(p)}</b><span>${esc(v)}</span></div>`).join("")}</div>
       <p class="source">Durées minimales conseillées pour un particulier. Source : <a href="${KEEP_URL}" target="_blank" rel="noopener">service-public.gouv.fr</a>, page vérifiée le 18 novembre 2026.</p>`;
@@ -732,13 +746,13 @@ function viewSettings(){
   <h2 class="sect">Ajouter</h2>
   <div class="list settings">
     <button class="cell" data-act="templates"><span class="ic" style="background:var(--d-famille)">${ico("list")}</span><span class="tx">Ajouter des échéances types<small>Contrôle technique, mutuelle, CAF…</small></span></button>
-    <button class="cell" data-act="redo-onb"><span class="ic" style="background:var(--d-identite)">${ico("home")}</span><span class="tx">Refaire le questionnaire de départ</span></button>
+    <button class="cell" data-act="redo-onb"><span class="ic" style="background:var(--d-identite)">${ico("home")}</span><span class="tx">Refaire le questionnaire de départ<small>${(()=>{const p=profil(), st=STATUTS.find(x=>x.k===p.statut); return st?esc(st.n)+" · "+(p.recherche==="non"?"sans recherche d'emploi":"en recherche d'emploi"):"Situation pro, recherche d'emploi, vie perso"})()}</small></span></button>
   </div>
   <h2 class="sect">Affichage</h2>
   <div class="list settings"><label class="cell toggle" for="set-jobs" style="cursor:pointer"><span class="ic" style="background:var(--d-travail)">${ico("travail")}</span><span class="tx">Onglet Candidatures<small>Masque-le quand tu as retrouvé un poste, tes données sont gardées</small></span><input type="checkbox" id="set-jobs" ${DB.settings.hideJobs?"":"checked"}></label></div>
   <h2 class="sect">Zone sensible</h2>
   <div class="list settings"><button class="cell danger" data-act="wipe"><span class="ic" style="background:var(--late)">${ico("trash")}</span><span class="tx">Tout effacer</span></button></div>
-  <p class="note">Mon classeur · version 1.5 · fonctionne hors ligne, sans compte.</p>
+  <p class="note">Mon classeur · version 1.8 · fonctionne hors ligne, sans compte.</p>
   <input type="file" id="restore-file" accept="application/json,.json" hidden>`;
 }
 
@@ -846,7 +860,7 @@ function viewDomain(){
   h += open.length ? `<div class="list">${open.map(itemRow).join("")}</div>` : `<div class="empty"><p>Aucune date pour l'instant.</p></div>`;
   const hasTpl=TPL.some(t=>t.d===k);
   h += `<div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap"><button class="btn small" data-act="add-item">+ Une date</button>${hasTpl?`<button class="btn small" data-act="templates-dom">Choisir dans les modèles</button>`:""}</div>`;
-  if(done.length) h += `<details style="margin-top:10px"><summary class="small muted">${done.length} terminée(s)</summary><div class="list" style="margin-top:8px">${done.map(x=>`<div class="item" style="--c:var(--d-${esc(x.domain)})"><span class="check ticked"><span>${ico("check",'stroke-width="3"')}</span></span><button class="main" data-open="${esc(x.id)}"><span class="t">${esc(x.title)}</span><span class="sub">Fait le ${esc(fmt(x.lastDone))}</span></button><span></span></div>`).join("")}</div></details>`;
+  if(done.length) h += `<details style="margin-top:10px"><summary class="small muted">${done.length} terminée(s)</summary><div class="list" style="margin-top:8px">${done.map(doneRow).join("")}</div></details>`;
 
   // Mes papiers + suggestions
   const docs=DB.docs.filter(x=>x.domain===k).sort((a,b)=>(a.title||"").localeCompare(b.title||""));
@@ -871,7 +885,13 @@ function viewDomain(){
 function cspBlocks(){
   const c=DB.settings.csp;
   let h = "";
-  if(!c){
+  if(!c && profil().statut==="are"){
+    h += `<p class="lead2">Pour garder tes allocations, <b>actualise-toi chaque mois</b> sur francetravail.fr, entre le 28 et le 15 du mois suivant (le 26 en février). Signale aussi tout changement sans attendre : reprise d'emploi, formation, arrêt maladie.</p>`;
+    const todo=DB.items.filter(x=>x.domain==="chomage"&&!x.done).sort((a,b)=>(a.due||"9").localeCompare(b.due||"9"));
+    if(!todo.some(x=>x.tpl==="actu")) h += `<button class="btn block" data-act="add-actu">Me rappeler l'actualisation chaque mois</button>`;
+    if(todo.length) h += `<h2 class="sect">Mes démarches <span class="n">${todo.length}</span></h2><div class="list">${todo.map(itemRow).join("")}</div>`;
+    h += `<p class="note">Source : <a href="https://www.francetravail.fr/candidat/vos-droits-et-demarches/vos-demarches-aupres-de-pole-emp/lactualisation-mensuelle.html" target="_blank" rel="noopener">francetravail.fr, l'actualisation mensuelle</a>, consulté le 26 novembre 2026. En licenciement économique avec CSP ? <button class="linkbtn" data-act="csp-setup" style="padding:0;font-size:13px">Créer mon parcours CSP</button></p>`;
+  } else if(!c){
     h += `<p class="lead2">Licenciement économique avec contrat de sécurisation professionnelle : l'appli calcule toutes tes dates clés à partir d'une seule date, celle où ton employeur t'a remis le document d'information CSP.</p>
       <button class="btn primary block" data-act="csp-setup">Créer mon parcours CSP</button>`;
   } else {
@@ -1225,200 +1245,6 @@ function openJobRecap(){
     <button class="btn block" data-act="job-recap-note">Enregistrer comme note</button>`, {left:"Fermer"});
 }
 
-/* ======================= Bons plans =======================
-   Suggestions vérifiées le 23 nov. 2026 sur les sites officiels cités. */
-DOM.bonsplans = {k:"bonsplans", n:"Bons plans", links:[]};
-const DCATS = [
-  {k:"voyage",n:"Voyage",i:"plane"},{k:"sport",n:"Sport & montagne",i:"mountain"},{k:"culture",n:"Culture",i:"ticket"},
-  {k:"event",n:"Événement",i:"star"},{k:"aide",n:"Aides & droits",i:"euro"},{k:"shopping",n:"Réductions",i:"tag"},
-];
-const DCAT = Object.fromEntries(DCATS.map(c=>[c.k,c]));
-const DPLACES = ["Lyon","Grenoble & Grésivaudan","Région","Partout"];
-const SUGG = [
-  {id:"ter-days", cat:"voyage", place:"Région", u26:true, hot:true, until:"2026-11-29",
-   t:"TER Days : la carte TER -26 ans annoncée à 5 €",
-   tx:`<p>Pendant les TER Days (du 23 au 29 novembre), la page officielle TER Auvergne-Rhône-Alpes annonce la carte illico LIBERTÉ JEUNES à 5 € au lieu de 15 €.</p>`,
-   cav:"La page ne précise pas l'année : vérifie que l'offre est bien en cours avant de compter dessus.",
-   url:"https://www.ter.sncf.com/auvergne-rhone-alpes/ter-days", src:"ter.sncf.com"},
-  {id:"illico-jeunes", cat:"voyage", place:"Région", u26:true,
-   t:"Carte illico LIBERTÉ JEUNES : -50 % sur les TER de la région",
-   tx:`<ul><li>15 € par an, pour les moins de 26 ans.</li><li>-50 % sur les trains et cars TER Auvergne-Rhône-Alpes, Lyon ↔ Grenoble compris.</li><li>Le week-end et les jours fériés, jusqu'à 3 personnes qui voyagent avec toi ont aussi la réduction.</li><li>Elle s'arrête à tes 26 ans : achetée 6 mois avant, elle ne dure que 6 mois.</li></ul>`,
-   url:"https://www.ter.sncf.com/auvergne-rhone-alpes/tarifs-cartes/cartes-reduction/illico-liberte-jeunes", src:"ter.sncf.com"},
-  {id:"avantage-jeune", cat:"voyage", place:"Partout", u28:true,
-   t:"Carte Avantage Jeune SNCF : -30 % sur les TGV INOUI et Intercités",
-   tx:`<ul><li>49 € par an, de 12 à 27 ans (il faut avoir moins de 28 ans au début de sa validité).</li><li>-30 % sur les TGV INOUI et Intercités, et une réduction variable selon la région sur les TER.</li><li>Pratique pour tes week-ends en France.</li></ul>`,
-   url:"https://www.sncf-connect.com/catalogue/description/carte-avantage-jeune", src:"sncf-connect.com"},
-  {id:"lumieres-2026", cat:"event", place:"Lyon", start:"2026-12-05", until:"2026-12-08",
-   t:"Fête des Lumières : du 5 au 8 décembre 2026, gratuite",
-   tx:`<ul><li>27 œuvres dans la ville, accès libre.</li><li>Samedi 5 : 19 h-23 h · dimanche 6 : 18 h-22 h · lundi 7 et mardi 8 : 19 h-23 h.</li><li>Pas de spectacle à la basilique de Fourvière le 8 décembre.</li></ul>`,
-   url:"https://www.fetedeslumieres.lyon.fr", src:"fetedeslumieres.lyon.fr"},
-  {id:"musees-nationaux", cat:"culture", place:"Partout", u26:true,
-   t:"Musées nationaux gratuits pour les 18-25 ans",
-   tx:`<p>Les collections permanentes des musées nationaux sont gratuites pour les 18-25 ans résidant dans l'Union européenne. Les expositions temporaires restent en général payantes. Pense à ta pièce d'identité.</p>`,
-   url:"https://www.culture.gouv.fr/thematiques/musees/Les-musees-en-France/les-politiques-des-musees-de-france/la-gratuite-des-collections-permanentes-pour-les-18-25-ans-dans-les-musees-nationaux", src:"culture.gouv.fr"},
-  {id:"musees-lyon", cat:"culture", place:"Lyon",
-   t:"Musées de Lyon gratuits pour les demandeurs d'emploi",
-   tx:`<p>Le musée des Beaux-Arts et le musée d'histoire de Lyon (Gadagne) sont gratuits pour les demandeurs d'emploi, sur présentation d'un justificatif de moins de 6 mois. La Ville de Lyon propose aussi une carte Lyon Culture, gratuite pour les personnes au chômage.</p>`,
-   cav:"Pendant ton CSP, demande à ton conseiller quel justificatif présenter.",
-   url:"https://www.mba-lyon.fr/fr/article/horaires-tarifs-normal", src:"mba-lyon.fr, gadagne-lyon.fr, lyon.fr"},
-  {id:"musee-grenoble", cat:"culture", place:"Grenoble & Grésivaudan", u26:true,
-   t:"Musée de Grenoble : collections gratuites, expos gratuites pour les -26 ans",
-   tx:`<ul><li>Les collections permanentes sont gratuites pour tout le monde.</li><li>L'exposition temporaire (14 €, 7 € en tarif réduit) est gratuite pour les moins de 26 ans, et pour tous le 1er dimanche du mois.</li></ul>`,
-   url:"https://www.museedegrenoble.fr/1931-informations-pratiques.htm", src:"museedegrenoble.fr"},
-  {id:"musees-isere", cat:"culture", place:"Grenoble & Grésivaudan",
-   t:"Les 11 musées du Département de l'Isère sont gratuits",
-   tx:`<p>Le Musée dauphinois à Grenoble et les autres musées du Département sont gratuits pour tout le monde. Une visite guidée gratuite a lieu le 1er dimanche du mois à 11 h, sur inscription.</p>`,
-   url:"https://musees.isere.fr", src:"musees.isere.fr"},
-  {id:"tcl-solidaire", cat:"aide", place:"Lyon",
-   t:"TCL Solidaire Réduit : 10,50 € par mois",
-   tx:`<p>Abonnement TCL à 10,50 € par mois pour les personnes non imposables qui touchent une allocation de France Travail (ARE, AREF, ASS…) et qui habitent dans les zones 1 à 5 du réseau. La demande se fait sur tcl.fr ou en agence.</p>`,
-   cav:"L'ASP (ton allocation pendant le CSP) n'apparaît pas dans la liste publiée : demande à TCL si tu y as droit.",
-   url:"https://www.tcl.fr/sites/default/files/2026-01/3000126_FICHE_SOLIDAIRE_REDUIT.pdf", src:"tcl.fr"},
-  {id:"aide-mobilite", cat:"aide", place:"Partout",
-   t:"Frais de déplacement remboursés pour un entretien loin de chez toi",
-   tx:`<ul><li>France Travail peut prendre en charge le trajet si l'entretien est à plus de 60 km aller-retour (ou à plus de 2 h) : 0,23 €/km, 6,25 € de repas par jour, jusqu'à 31,20 € par nuit.</li><li>Pour un CDI, un CDD ou un intérim d'au moins 3 mois.</li><li>Demande avant l'entretien (au plus tard 7 jours après), puis envoie l'attestation de présence signée par le recruteur sous 15 jours.</li></ul>`,
-   cav:"Elle est réservée aux personnes non indemnisées, ou indemnisées au niveau du minimum de l'ARE : avec l'ASP, tu n'y as sans doute pas droit. Pose quand même la question à ton conseiller, qui peut accorder une aide exceptionnelle.",
-   url:"https://www.francetravail.fr/candidat/vos-recherches/les-aides-financieres/recherche-demploi---laide-au-dep.html", src:"francetravail.fr"},
-];
-const IDEAS = [
-  {cat:"sport", t:"Ski : regarde les bourses aux skis d'automne et les forfaits demi-journée ou fin de saison des stations autour du Grésivaudan."},
-  {cat:"sport", t:"Montagne : pour le matériel de rando et de trail, l'occasion permet de gros écarts de prix. Les sites des magasins outdoor ont souvent un rayon seconde main."},
-  {cat:"voyage", t:"Voiture : compare les prix à la pompe sur prix-carburants.gouv.fr avant tes allers-retours Lyon ↔ Grésivaudan, et propose tes trajets en covoiturage pour partager les frais."},
-  {cat:"voyage", t:"Europe pas cher : crée des alertes de prix sur un comparateur de vols, avec des dates flexibles au départ de Lyon, Genève ou Grenoble."},
-  {cat:"culture", t:"Le 1er dimanche du mois, beaucoup de musées sont gratuits pour tout le monde : c'est le cas au musée de Grenoble."},
-  {cat:"aide", t:"Quand un lieu affiche un « tarif demandeur d'emploi », demande-le : avec un justificatif récent de France Travail, la réduction est souvent appliquée."},
-];
-
-const PROFILE_DEFAULT = {birth:"", places:["Lyon","Grenoble & Grésivaudan"], interests:["voyage","sport","culture","event","aide"], sports:["ski","rando"], transport:"voiture", travel:["weekend","europe"]};
-function prof(){ return {...PROFILE_DEFAULT, ...(DB.settings.profile||{})}; }
-function ageLimit(years){ const b=prof().birth; if(!/^\d{4}-\d{2}$/.test(b)) return null; const [y,m]=b.split("-").map(Number); return iso(new Date(y+years, m-1, 1)); }
-function monthsUntil(s){ const d=parse(s), t=today(); return (d.getFullYear()-t.getFullYear())*12 + d.getMonth()-t.getMonth(); }
-function suggOk(sg){
-  const p=prof(), hidden=DB.settings.hiddenSugg||[];
-  if(hidden.includes(sg.id)) return false;
-  if(sg.until && daysTo(sg.until)<0) return false;
-  if(sg.u26){ const l=ageLimit(26); if(l && daysTo(l)<0) return false; }
-  if(sg.u28){ const l=ageLimit(28); if(l && daysTo(l)<0) return false; }
-  if(sg.cat && !p.interests.includes(sg.cat) && !(sg.cat==="event"&&p.interests.includes("culture"))) return false;
-  if(sg.place!=="Partout" && sg.place!=="Région" && !p.places.includes(sg.place)) return false;
-  return true;
-}
-function dealsSoon(){ return (DB.deals||[]).filter(d=>!d.used && d.end && daysTo(d.end)>=0 && daysTo(d.end)<=7); }
-
-function dealTicket(){
-  const saved=(DB.deals||[]).filter(d=>!d.used && (!d.end||daysTo(d.end)>=0)).length;
-  const sugg=SUGG.filter(suggOk).length, soon=dealsSoon().length + SUGG.filter(s=>suggOk(s)&&s.hot).length;
-  return `<button class="ticket" data-act="open-deals"><span><span class="stamp">Réductions · sorties</span><span class="big" style="display:block">Bons plans</span><span class="sm" style="display:block">${soon?`${soon} à saisir rapidement`:`${sugg} idées pour toi`}${saved?` · ${saved} gardé(s)`:""}</span></span>
-    <span class="stub"><b>${sugg+saved}</b><span>plans</span></span></button>`;
-}
-
-function couponSugg(sg){
-  const c=DCAT[sg.cat]; const saved=(DB.deals||[]).some(d=>d.fromSugg===sg.id);
-  const tags=[sg.hot?`<span class="tagp hot">Jusqu'au ${esc(fmt(sg.until,{day:"numeric",month:"short"}))}</span>`:"", sg.start?`<span class="tagp hot">${esc(fmt(sg.start,{day:"numeric",month:"short"}))} → ${esc(fmt(sg.until,{day:"numeric",month:"short"}))}</span>`:"",
-    sg.u26?`<span class="tagp u26">Moins de 26 ans</span>`:"", sg.u28?`<span class="tagp u26">Jusqu'à 27 ans</span>`:"", `<span class="tagp">${esc(sg.place)}</span>`, `<span class="tagp">${esc(c.n)}</span>`].join("");
-  return `<article class="coupon" style="--c:var(--dc-${sg.cat})"><div class="lft">${ico(c.i)}</div><div class="bd">
-    <div class="tags">${tags}</div><span class="tt">${esc(sg.t)}</span><div class="tx">${sg.tx}</div>
-    ${sg.cav?`<p class="cav">${esc(sg.cav)}</p>`:""}
-    <p class="src">Vérifié le 23 nov. 2026 · source : ${esc(sg.src)}</p>
-    <div class="act"><a class="btn go" href="${esc(sg.url)}" target="_blank" rel="noopener" style="text-decoration:none;display:inline-flex;align-items:center">Voir l'offre</a>
-      ${saved?`<span class="tagp ok">Gardé</span>`:`<button class="btn" data-sugg-save="${sg.id}">Garder</button>`}
-      ${["voyage","sport","event","culture"].includes(sg.cat)?(DB.items.some(x=>isWish(x)&&x.fromDeal==="s:"+sg.id)?`<span class="tagp ok">Dans mes envies</span>`:`<button class="btn" data-wish-from-sugg="${sg.id}">+ Mes envies</button>`):""}
-      <button class="btn" data-sugg-hide="${sg.id}" style="background:none;color:var(--muted)">Pas pour moi</button></div></div></article>`;
-}
-function couponDeal(d){
-  const c=DCAT[d.cat]||DCAT.shopping; const u=safeUrl(d.url);
-  const st=d.used?`<span class="tagp ok">Utilisé</span>`:d.end&&daysTo(d.end)<0?`<span class="tagp">Expiré</span>`:d.end?`<span class="tagp ${daysTo(d.end)<=7?"hot":""}">${daysTo(d.end)<=7?"Expire ":"Jusqu'au "}${esc(daysTo(d.end)<=7?rel(d.end):fmt(d.end,{day:"numeric",month:"short"}))}</span>`:"";
-  return `<article class="coupon" style="--c:var(--dc-${esc(d.cat||"shopping")})"><div class="lft">${ico(c.i)}</div><div class="bd">
-    <div class="tags">${st}${d.start&&daysTo(d.start)>0?`<span class="tagp">Dès le ${esc(fmt(d.start,{day:"numeric",month:"short"}))}</span>`:""}${d.place?`<span class="tagp">${esc(d.place)}</span>`:""}<span class="tagp">${esc(c.n)}</span></div>
-    <span class="tt">${esc(d.title)}</span>
-    ${d.code?`<span><span class="code">${esc(d.code)}</span> <button class="linkbtn" data-copy="${esc(d.code)}" style="font-size:14px;padding:0 0 0 6px">Copier</button></span>`:""}
-    ${d.note?`<p class="tx" style="white-space:pre-wrap;color:var(--muted)">${esc(d.note)}</p>`:""}
-    <div class="act">${u?`<a class="btn go" href="${esc(u)}" target="_blank" rel="noopener" style="text-decoration:none;display:inline-flex;align-items:center">Ouvrir</a>`:""}
-      ${d.used?"":`<button class="btn" data-deal-used="${esc(d.id)}">J'en ai profité</button>`}${!d.used&&["voyage","sport","event","culture"].includes(d.cat)&&!DB.items.some(x=>isWish(x)&&x.fromDeal==="d:"+d.id)?`<button class="btn" data-wish-from-deal="${esc(d.id)}">+ Mes envies</button>`:""}<button class="btn" data-deal-edit="${esc(d.id)}" style="background:none;color:var(--muted)">Modifier</button></div></div></article>`;
-}
-
-function viewDeals(){
-  UI.dealSeg=UI.dealSeg||"foryou"; UI.dealCat=UI.dealCat||"all";
-  const p=prof();
-  let h=`<div class="dealhead"><div class="topbar"><button class="back" data-tab="domains">${ico("chev")}Domaines</button><button class="iconbtn" data-act="deal-new" aria-label="Ajouter un bon plan">${ico("plus")}</button></div>
-    <h1>Bons plans</h1><p>Réductions, sorties, voyages : tout ce qui allège le budget.</p>
-    <div class="dseg" role="group"><button data-dseg="foryou" aria-pressed="${UI.dealSeg==="foryou"}">Pour toi</button><button data-dseg="mine" aria-pressed="${UI.dealSeg==="mine"}">Mes plans</button><button data-dseg="profile" aria-pressed="${UI.dealSeg==="profile"}">Mon profil</button></div></div>`;
-  if(UI.dealSeg==="profile") return h+dealProfile();
-  if(UI.dealSeg==="mine"){
-    const all=DB.deals||[];
-    if(!all.length) return h+`<div class="empty"><p>Garde ici les bons plans que tu croises : un code promo, une offre avec date limite, un événement, un lien vers un site de réductions… L'appli te rappelle ceux qui vont expirer.</p><button class="btn primary" data-act="deal-new">Ajouter un bon plan</button></div>`;
-    const list=all.filter(d=>UI.dealCat==="all"||d.cat===UI.dealCat);
-    const active=list.filter(d=>!d.used&&(!d.end||daysTo(d.end)>=0)).sort((a,b)=>(a.end||"9999").localeCompare(b.end||"9999"));
-    const past=list.filter(d=>d.used||(d.end&&daysTo(d.end)<0));
-    h+=`<div class="chips" style="margin-bottom:12px"><button class="chip" data-dcat="all" aria-pressed="${UI.dealCat==="all"}">Tous</button>${DCATS.map(c=>`<button class="chip" data-dcat="${c.k}" aria-pressed="${UI.dealCat===c.k}" style="--c:var(--dc-${c.k})"><span class="dot"></span>${esc(c.n)}</button>`).join("")}</div>`;
-    h+= active.length?active.map(couponDeal).join(""):`<div class="empty"><p>Rien d'actif dans cette catégorie.</p></div>`;
-    if(past.length) h+=`<details style="margin-top:16px"><summary class="small muted" style="cursor:pointer">${past.length} utilisé(s) ou expiré(s)</summary><div style="margin-top:10px">${past.map(couponDeal).join("")}</div></details>`;
-    return h;
-  }
-  // Pour toi
-  const l26=ageLimit(26);
-  if(!p.birth) h+=`<div class="u26bar"><b>Jusqu'à quand as-tu droit aux tarifs -26 ans ?</b><span class="small">Indique ton mois de naissance dans « Mon profil » : l'appli te préviendra avant que ces réductions s'arrêtent. L'info reste sur ton téléphone.</span><button class="linkbtn" data-dseg="profile" style="align-self:flex-start;padding:0">Ajouter mon mois de naissance</button></div>`;
-  else if(l26 && daysTo(l26)>=0){ const m=monthsUntil(l26); h+=`<div class="u26bar"><b>Encore ${m} mois de tarifs -26 ans</b><div class="meter"><i style="width:${Math.max(4,Math.min(100,100-(m/12)*100))}%"></i></div><span class="small">Ils s'arrêtent à tes 26 ans, en ${esc(fmt(l26,{month:"long",year:"numeric"}))}. Profite des cartes et gratuités marquées « Moins de 26 ans » d'ici là.</span></div>`; }
-  const ok=SUGG.filter(suggOk);
-  const hot=ok.filter(s=>s.hot||(s.start&&daysTo(s.start)<=30));
-  const rest=ok.filter(s=>!hot.includes(s));
-  const soon=dealsSoon();
-  if(hot.length||soon.length) h+=`<h2 class="sect">À ne pas rater</h2>${soon.map(couponDeal).join("")}${hot.map(couponSugg).join("")}`;
-  const order=["aide","voyage","culture","event","sport","shopping"];
-  for(const k of order){ const arr=rest.filter(s=>s.cat===k); if(!arr.length) continue; h+=`<h2 class="sect">${esc(DCAT[k].n)}</h2>${arr.map(couponSugg).join("")}`; }
-  const ideas=IDEAS.filter(i=>p.interests.includes(i.cat));
-  if(ideas.length) h+=`<h2 class="sect">Idées à creuser</h2><div class="tips">${ideas.map(i=>`<div>${ico("bulb")}<span>${esc(i.t)}</span></div>`).join("")}</div><p class="note">Ce sont des pistes, pas des offres vérifiées.</p>`;
-  if((DB.settings.hiddenSugg||[]).length) h+=`<button class="linkbtn" data-act="sugg-unhide" style="margin-top:8px">Réafficher les plans masqués (${DB.settings.hiddenSugg.length})</button>`;
-  h+=`<p class="note">Les offres changent souvent : vérifie toujours les conditions sur le site avant d'acheter. Ces suggestions ont été vérifiées le 23 novembre 2026.</p>`;
-  return h;
-}
-
-function dealProfile(){
-  const p=prof();
-  const multi=(key,opts)=>`<div class="multi" data-pgroup="${key}">${opts.map(([v,l])=>`<button type="button" data-pval="${esc(v)}" aria-pressed="${(p[key]||[]).includes(v)}">${esc(l)}</button>`).join("")}</div>`;
-  return `<div class="form">
-    <div class="f"><label for="p-birth">Mon mois de naissance</label><input id="p-birth" type="month" value="${esc(p.birth||"")}"><span class="hint">Sert uniquement à calculer jusqu'à quand tu as droit aux tarifs jeunes. Reste sur ce téléphone.</span></div>
-    <div class="f"><label>Où je cherche des bons plans</label>${multi("places",DPLACES.filter(x=>x!=="Partout"&&x!=="Région").map(x=>[x,x]))}</div>
-    <div class="f"><label>Ce qui m'intéresse</label>${multi("interests",DCATS.map(c=>[c.k,c.n]))}</div>
-    <div class="f"><label>Mes sports</label>${multi("sports",[["ski","Ski / hiver"],["rando","Rando, trail"],["escalade","Escalade"],["salle","Salle, running"]])}</div>
-    <div class="f"><label>Mes voyages</label>${multi("travel",[["weekend","Week-ends en France"],["europe","Europe pas cher"],["sportif","Voyages sportifs"],["loin","Loin et longtemps"]])}</div>
-  </div>
-  <p class="note">Le profil filtre les suggestions de l'onglet « Pour toi ». Chaque modification est enregistrée tout de suite.</p>`;
-}
-function saveProfile(patch){ DB.settings.profile={...prof(), ...patch}; syncU26Item(); persist(); }
-function syncU26Item(){
-  DB.items=DB.items.filter(x=>x.tpl!=="u26");
-  const l=ageLimit(26); if(!l || daysTo(l)<0) return;
-  DB.items.push({id:uid(),tpl:"u26",domain:"bonsplans",title:"Dernier mois des tarifs -26 ans",due:addMonths(l,-1),repeat:0,where:"",amount:"",note:"Carte TER illico LIBERTÉ JEUNES, musées gratuits pour les 18-25 ans, expos du musée de Grenoble… Profites-en avant tes 26 ans.",updatedAt:iso(new Date())});
-}
-
-function openDealForm(x=null, pre={}){
-  EDIT = x ? {...x} : {cat:"shopping", place:"Lyon", ...pre};
-  openSheet(x?"Modifier le bon plan":"Nouveau bon plan", `<form id="f-deal" class="form">
-    <div class="f"><label for="dl-title">Le bon plan</label><input id="dl-title" required value="${esc(EDIT.title||"")}" placeholder="Ex. -20 % sur la location de skis"></div>
-    <div class="f"><label>Catégorie</label>${pickGroup("pk-dcat",DCATS.map(c=>[c.k,c.n]),EDIT.cat)}</div>
-    <div class="f"><label>Où</label>${pickGroup("pk-dplace",DPLACES.map(x=>[x,x]),EDIT.place)}</div>
-    <div class="f"><label for="dl-url">Lien</label><input id="dl-url" type="url" inputmode="url" value="${esc(EDIT.url||"")}" placeholder="https://…"></div>
-    <div class="f"><label for="dl-code">Code promo</label><input id="dl-code" value="${esc(EDIT.code||"")}" autocapitalize="characters" placeholder="Facultatif"></div>
-    <div class="f"><label for="dl-start">À partir du</label><input id="dl-start" type="date" value="${esc(EDIT.start||"")}"></div>
-    <div class="f"><label for="dl-end">Jusqu'au</label><input id="dl-end" type="date" value="${esc(EDIT.end||"")}"><span class="hint">Avec une date de fin, l'appli te le rappelle 3 jours avant dans « À venir ».</span></div>
-    <div class="f"><label for="dl-note">Notes</label><textarea id="dl-note" placeholder="Conditions, justificatif à présenter…">${esc(EDIT.note||"")}</textarea></div>
-  </form>${x?`<button class="btn block danger" data-act="deal-del">Supprimer</button>`:""}`, {right:"OK", rightAct:"save-deal"});
-  if(!x && !pre.title) setTimeout(()=>$("#dl-title")?.focus(),300);
-}
-function syncDealItem(d){
-  DB.items=DB.items.filter(x=>x.tpl!==`deal-${d.id}`);
-  if(!d.used && d.end && daysTo(d.end)>=0){ const due=daysTo(d.end)>3?addDays(d.end,-3):d.end;
-    DB.items.push({id:uid(),tpl:`deal-${d.id}`,domain:"bonsplans",title:`Bon plan qui expire : ${d.title}`,due,repeat:0,where:"",amount:"",note:`Valable jusqu'au ${fmt(d.end)}.`,updatedAt:iso(new Date())}); }
-}
-function saveDeal(d){ const o=upsert("deals",d); syncDealItem(o); persist(); return o; }
-function saveDealForm(){
-  const title=$("#dl-title").value.trim(); if(!title){ $("#dl-title").focus(); return; }
-  let url=$("#dl-url").value.trim(); if(url && !/^https?:\/\//i.test(url)) url="https://"+url;
-  saveDeal({...EDIT, title, cat:picked("pk-dcat")||"shopping", place:picked("pk-dplace")||"", url, code:$("#dl-code").value.trim(), start:$("#dl-start").value||null, end:$("#dl-end").value||null, note:$("#dl-note").value});
-  closeSheet(); UI.tab="deals"; UI.dealSeg="mine"; render(); toast("Bon plan gardé");
-}
-
 /* ======================= Loisirs & envies =======================
    Une to-do légère : les envies sans date restent dans cet espace,
    seules les envies datées remontent dans « À venir ». */
@@ -1442,7 +1268,7 @@ function loisirsBlocks(){
     <form id="f-wish-quick" class="search" style="background:var(--surface);height:48px">${ico("plus")}<input id="wq" placeholder="Ajouter une envie…" autocomplete="off" enterkeyhint="done"></form>
     <div class="chips" style="margin:2px -16px 10px"><button class="chip" data-wtype="all" aria-pressed="${UI.wType==="all"}">Tout</button>${WTYPES.map(([k,n])=>`<button class="chip" data-wtype="${k}" aria-pressed="${UI.wType===k}">${esc(n)}</button>`).join("")}</div>`;
   h += open.length ? `<div class="list">${open.map(wishRow).join("")}</div>`
-    : `<div class="empty"><p>${all.length?"Rien à faire dans cette catégorie.":"Une sortie à tester, un week-end à organiser, un refuge à réserver… Écris-le ci-dessus et coche-le quand c'est fait."}</p>${all.length?"":`<button class="btn" data-act="open-deals">Piocher dans les bons plans</button>`}</div>`;
+    : `<div class="empty"><p>${all.length?"Rien à faire dans cette catégorie.":"Une sortie à tester, un week-end à organiser, un refuge à réserver… Écris-le ci-dessus et coche-le quand c'est fait."}</p></div>`;
   if(done.length) h += `<details style="margin-top:14px"><summary class="small muted" style="cursor:pointer">${done.length} faite(s)</summary><div class="list" style="margin-top:8px">${done.map(wishRow).join("")}</div></details>`;
   return h;
 }
@@ -1471,12 +1297,6 @@ function saveWishForm(){
   if(o.done && due && daysTo(due)>=0) o.done=false;
   addWish(o); closeSheet(); render(); toast(due?"Envie ajoutée, elle apparaît aussi dans « À venir »":"Envie ajoutée");
 }
-const CAT2W = {voyage:"voyage", sport:"sport", event:"sortie", culture:"sortie"};
-function wishFromDeal(src){
-  if(DB.items.some(x=>isWish(x)&&x.fromDeal===src.key)){ toast("Déjà dans tes envies"); return; }
-  addWish({fromDeal:src.key, title:src.title, wtype:CAT2W[src.cat]||"autre", due:src.start||null, url:src.url||"", note:src.until?`Jusqu'au ${fmt(src.until)}`:""});
-  render(); toast("Ajouté à tes envies (Domaines › Loisirs & envies)");
-}
 
 /* ======================= Onboarding ======================= */
 function renderOnboarding(){
@@ -1491,23 +1311,55 @@ function renderOnboarding(){
     </div>
     <div class="foot"><button class="btn primary block" data-onb="next">Commencer</button><button class="linkbtn" data-act="restore-onb">J'ai déjà une sauvegarde</button></div>
     <input type="file" id="restore-file" accept="application/json,.json" hidden></div>`;
-  const picked = TPL.filter(t=>t.s.includes("base")||t.s.some(s=>UI.situ.has(s)));
+  const O=UI.onb||(UI.onb={...profil()});
+  const step=(n)=>`<span class="steps">Étape ${n} sur 3</span>`;
+  const back=`<button class="linkbtn" data-onb="back" style="align-self:flex-start;padding:0">‹ Retour</button>`;
+  const choice=(list,key)=>`<div class="choices" role="radiogroup">${list.map(o=>`<button role="radio" data-onb-pick="${key}:${o.k}" aria-checked="${O[key]===o.k}">${o.i?ico(o.i):""}<span><b>${esc(o.n)}</b>${o.s?`<small>${esc(o.s)}</small>`:""}</span></button>`).join("")}</div>`;
+  if(UI.onbStep===1) return `<div class="onb">${step(1)}
+    <h1>Quelle est ta situation pro aujourd'hui ?</h1>
+    <p class="lead">L'appli s'adapte : elle n'affiche que ce qui te concerne.</p>
+    ${choice(STATUTS,"statut")}
+    <div class="foot"><button class="btn primary block" data-onb="to2" ${O.statut?"":"disabled"}>Continuer</button></div></div>`;
+  if(UI.onbStep===2) return `<div class="onb">${back}${step(2)}
+    <h1>Tu cherches un emploi ?</h1>
+    <p class="lead">${isChomeur(O.statut)?"Suivre tes candidatures t'aide aussi pour tes rendez-vous France Travail.":"Tu pourras changer d'avis à tout moment dans Réglages."}</p>
+    ${choice(RECHERCHES,"recherche")}
+    <div class="foot"><button class="btn primary block" data-onb="to3" ${O.recherche?"":"disabled"}>Continuer</button></div></div>`;
+  const situ=onbSitu();
+  const picked = TPL.filter(t=>t.s.includes("base")||t.s.some(s=>situ.has(s)));
   const uniq = [...new Map(picked.map(t=>[t.id,t])).values()];
-  return `<div class="onb">
-    <span class="steps">Étape 1 sur 1</span>
-    <h1>Qu'est-ce qui te concerne ?</h1>
+  return `<div class="onb">${back}${step(3)}
+    <h1>Et dans ta vie perso ?</h1>
     <p class="lead">Coche tout ce qui s'applique. On prépare tes échéances, tu n'auras plus qu'à mettre tes dates.</p>
-    <div class="situ">${SITUATIONS.map(s=>`<button data-situ="${s.k}" aria-pressed="${UI.situ.has(s.k)}" style="--c:var(--d-${s.c})">${ico(s.i)}<span>${esc(s.n)}</span></button>`).join("")}</div>
+    <div class="situ">${SITUATIONS.filter(s=>s.k!=="salarie").map(s=>`<button data-situ="${s.k}" aria-pressed="${UI.situ.has(s.k)}" style="--c:var(--d-${s.c})">${ico(s.i)}<span>${esc(s.n)}</span></button>`).join("")}</div>
     <div class="foot"><button class="btn primary block" data-onb="finish">Créer mes ${uniq.length} échéances</button><button class="linkbtn" data-onb="skip">Passer, je commence à vide</button></div></div>`;
 }
+/* Les cases cochées + ce que la situation pro implique */
+function onbSitu(){
+  const st=(UI.onb||{}).statut, x=new Set(UI.situ);
+  x.delete("salarie");
+  if(st==="salarie") x.add("salarie");
+  if(st==="are") x.add("are");
+  return x;
+}
+function actuDue(){ // date limite de l'actualisation en cours : le 15
+  const t=today(); let d=new Date(t.getFullYear(),t.getMonth(),15);
+  if(t.getDate()>15) d=new Date(t.getFullYear(),t.getMonth()+1,15);
+  return iso(d);
+}
 function finishOnboarding(create){
+  const O=UI.onb||{};
+  if(O.statut) DB.settings.profil={statut:O.statut, recherche:O.recherche||"non"};
+  if(O.recherche) DB.settings.hideJobs = O.recherche==="non";
+  applyProfil();
+  const situ=onbSitu();
   if(create){
     const have=new Set(DB.items.map(x=>x.tpl).filter(Boolean));
-    const picked=TPL.filter(t=>(t.s.includes("base")||t.s.some(s=>UI.situ.has(s)))&&!have.has(t.id));
-    for(const t of picked) DB.items.push({id:uid(),tpl:t.id,title:t.t,domain:t.d,repeat:t.r,due:t.md?nextFromMD(t.md):null,note:t.note||"",where:"",amount:"",updatedAt:iso(new Date())});
+    const picked=TPL.filter(t=>(t.s.includes("base")||t.s.some(s=>situ.has(s)))&&!have.has(t.id));
+    for(const t of picked) DB.items.push({id:uid(),tpl:t.id,title:t.t,domain:t.d,repeat:t.r,due:t.id==="actu"?actuDue():t.md?nextFromMD(t.md):null,note:t.note||"",where:"",amount:"",updatedAt:iso(new Date())});
   }
-  DB.settings.onboarded=true; persist(); UI.tab="home"; render();
-  if(create && UI.situ.has("csp") && !DB.settings.csp){ UI.tab="domain"; UI.domKey="chomage"; render(); openCspSetup(); return; }
+  DB.settings.onboarded=true; persist(); UI.tab="home"; UI.onb=null; render();
+  if(O.statut==="csp" && !DB.settings.csp){ UI.tab="domain"; UI.domKey="chomage"; render(); openCspSetup(); return; }
   if(create) toast("C'est prêt. Commence par dater tes échéances « À dater ».");
 }
 
@@ -1515,19 +1367,18 @@ function finishOnboarding(create){
 function openSheet(title, body, {left="Annuler", right=null, rightAct=null}={}){
   $("#sheet-root").innerHTML = `<div class="scrim" data-scrim><div class="sheet" role="dialog" aria-modal="true" aria-label="${esc(title)}">
     <div class="grabber"></div>
-    <div class="sheet-head"><button class="linkbtn l" data-close>${left}</button><h2>${esc(title)}</h2>${right?`<button class="linkbtn r" data-sheet-act="${rightAct}" style="font-weight:700">${right}</button>`:"<span></span>"}</div>
-    <div class="sheet-body">${body}</div></div></div>`;
+    <div class="sheet-head"><button class="linkbtn l" data-close>${left}</button><h2>${esc(title)}</h2><span></span></div>
+    <div class="sheet-body">${body}</div>${right?`<div class="sheet-foot"><button class="btn primary block" data-sheet-act="${rightAct}">${right==="OK"?"Enregistrer":right}</button></div>`:""}</div></div>`;
   document.body.style.overflow="hidden";
 }
 function closeSheet(){ $("#sheet-root").innerHTML=""; document.body.style.overflow=""; }
 
-function domSelect(sel){ return `<div class="domsel" id="domsel">${DOMAINS.map(d=>`<button type="button" data-pick="${d.k}" aria-pressed="${d.k===sel}" style="--c:var(--d-${d.k})"><span class="dot"></span>${esc(d.n)}</button>`).join("")}</div>`; }
+function domSelect(sel){ return `<div class="domsel" id="domsel">${visibleDomains().map(d=>`<button type="button" data-pick="${d.k}" aria-pressed="${d.k===sel}" style="--c:var(--d-${d.k})"><span class="dot"></span>${esc(d.n)}</button>`).join("")}</div>`; }
 const pickedDom = () => ($("#domsel [aria-pressed='true']")||{}).dataset?.pick || "logement";
 
 let EDIT=null;
 function openAdd(){
   if(UI.tab==="domain" && UI.domKey==="loisirs"){ openWishForm(); return; }
-  if(UI.tab==="docs" && UI.docSeg==="notes"){ openNoteForm(); return; }
   if(UI.tab==="docs"){ openDocForm(); return; }
   const inDom = UI.tab==="domain" ? DOM[UI.domKey] : null;
   openSheet(inDom?`Ajouter · ${inDom.n}`:"Ajouter", `<div class="list settings">
@@ -1538,16 +1389,23 @@ function openAdd(){
   </div>`);
 }
 
+function quickDates(target){
+  const q=[["Demain",1],["Dans 1 semaine",7],["Dans 1 mois",30]];
+  return `<div class="quick">${q.map(([l,n])=>`<button type="button" data-qdate="${target}:${n}">${l}</button>`).join("")}</div>`;
+}
 function openItemForm(x=null){
-  EDIT = x ? {...x} : {domain: curDom("logement"), repeat:12};
+  EDIT = x ? {...x} : {domain: curDom("logement"), repeat:0};
+  const extra = !!(EDIT.amount||EDIT.where||EDIT.note);
   openSheet(x?"Modifier":"Nouvelle échéance", `<form id="f-item" class="form">
     <div class="f"><label for="i-title">Quoi ?</label><input id="i-title" required value="${esc(EDIT.title||"")}" placeholder="Ex. Contrôle technique de la Clio" enterkeyhint="next"></div>
-    <div class="f"><label for="i-due">Date</label><input id="i-due" type="date" value="${esc(EDIT.due||"")}"><span class="hint">Laisse vide si tu ne la connais pas encore.</span></div>
-    <div class="f"><label for="i-repeat">Revient</label><select id="i-repeat">${REPEATS.map(([m,l])=>`<option value="${m}" ${m===(EDIT.repeat||0)?"selected":""}>${l}</option>`).join("")}</select></div>
+    <div class="f"><label for="i-due">Quand ?</label><input id="i-due" type="date" value="${esc(EDIT.due||"")}">${quickDates("i-due")}<span class="hint">Tu ne connais pas encore la date ? Laisse vide.</span></div>
     <div class="f"><label>Domaine</label>${domSelect(EDIT.domain)}</div>
-    <div class="f"><label for="i-amount">Montant (€)</label><input id="i-amount" inputmode="decimal" value="${esc(EDIT.amount||"")}" placeholder="Facultatif"></div>
-    <div class="f"><label for="i-where">Où est le document lié ?</label><input id="i-where" value="${esc(EDIT.where||"")}" placeholder="Lien https://… ou « boîte archives, dossier Voiture »"></div>
-    <div class="f"><label for="i-note">Note</label><textarea id="i-note" placeholder="N° de contrat, contact, rappel…">${esc(EDIT.note||"")}</textarea></div>
+    <div class="f"><label for="i-repeat">Ça revient ?</label><select id="i-repeat">${REPEATS.map(([m,l])=>`<option value="${m}" ${m===(EDIT.repeat||0)?"selected":""}>${l}</option>`).join("")}</select></div>
+    <details class="more" ${extra?"open":""}><summary>Montant, document, note</summary>
+      <div class="f"><label for="i-amount">Montant (€)</label><input id="i-amount" inputmode="decimal" value="${esc(EDIT.amount||"")}" placeholder="Facultatif"></div>
+      <div class="f"><label for="i-where">Où est le document lié ?</label><input id="i-where" value="${esc(EDIT.where||"")}" placeholder="Lien https://… ou « classeur bleu, Voiture »"></div>
+      <div class="f"><label for="i-note">Note</label><textarea id="i-note" placeholder="N° de contrat, contact, rappel…">${esc(EDIT.note||"")}</textarea></div>
+    </details>
   </form>${x?`<button class="btn block danger" data-act="del-item">Supprimer l'échéance</button>`:""}`, {right:"OK", rightAct:"save-item"});
   if(!x) setTimeout(()=>$("#i-title")?.focus(),300);
 }
@@ -1584,8 +1442,10 @@ function openDocForm(x=null){
       <datalist id="keep-list">${KEEP.map(k=>`<option value="${esc(k[1])}"></option>`).join("")}</datalist></div>
     <div class="f"><label for="d-where">Où il est rangé</label><input id="d-where" value="${esc(EDIT.where||"")}" placeholder="Fichiers › Admin › Impôts, ou « classeur bleu »"><span class="hint">Pour un papier en ligne, note l'espace où le retrouver (impots.gouv, ameli…).</span></div>
     <div class="f"><label>Domaine</label>${domSelect(EDIT.domain)}</div>
-    <div class="f"><label for="d-date">Date du document</label><input id="d-date" type="date" value="${esc(EDIT.date||"")}"></div>
-    <div class="f"><label for="d-keep">À garder jusqu'à</label><input id="d-keep" value="${esc(EDIT.keep||"")}" placeholder="Se remplit si le document est dans le guide"></div>
+    <details class="more" ${EDIT.date||EDIT.keep?"open":""}><summary>Date, durée de conservation</summary>
+      <div class="f"><label for="d-date">Date du document</label><input id="d-date" type="date" value="${esc(EDIT.date||"")}"></div>
+      <div class="f"><label for="d-keep">À garder jusqu'à</label><input id="d-keep" value="${esc(EDIT.keep||"")}" placeholder="Se remplit tout seul pour les papiers courants"></div>
+    </details>
   </form>${x?`<button class="btn block danger" data-act="del-doc">Supprimer le document</button>`:""}`, {right:"OK", rightAct:"save-doc"});
   $("#d-title").addEventListener("change", ()=>{ const k=KEEP.find(k=>k[1]===$("#d-title").value); if(k){ if(!$("#d-keep").value) $("#d-keep").value=k[2]; document.querySelectorAll("#domsel button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.pick===k[0]))); } });
   if(!x) setTimeout(()=>$("#d-title")?.focus(),300);
@@ -1611,7 +1471,7 @@ function openDocDetail(id){
 function openTemplates(only=null){
   const have=new Set(DB.items.map(x=>x.tpl||x.title));
   openSheet("Modèles", `<p class="small muted" style="margin:0 4px">Les dates proposées sont indicatives : vérifie-les ensuite. Les autres arrivent dans « À dater ».</p>
-  ${DOMAINS.filter(d=>!only||d.k===only).map(d=>{const ts=TPL.filter(t=>t.d===d.k); if(!ts.length) return ""; return `<div><h2 class="sect" style="margin-top:4px;font-size:16px"><span class="dot" style="--c:var(--d-${d.k})"></span>${esc(d.n)}</h2>
+  ${visibleDomains().filter(d=>!only||d.k===only).map(d=>{const ts=TPL.filter(t=>t.d===d.k); if(!ts.length) return ""; return `<div><h2 class="sect" style="margin-top:4px;font-size:16px"><span class="dot" style="--c:var(--d-${d.k})"></span>${esc(d.n)}</h2>
     <div class="list tpl">${ts.map(t=>{const dup=have.has(t.id)||have.has(t.t);return `<label><input type="checkbox" data-tpl="${t.id}" ${dup?"disabled checked":""}><span>${esc(t.t)}<small>${dup?"Déjà dans ton classeur":esc(repLabel(t.r))+(t.md?` · vers le ${esc(fmt(nextFromMD(t.md),{day:"numeric",month:"long"}))}`:"")}${t.note&&!dup?` · ${esc(t.note)}`:""}</small></span></label>`;}).join("")}</div></div>`;}).join("")}`,
   {right:"Ajouter", rightAct:"add-tpl"});
 }
@@ -1650,7 +1510,7 @@ function restoreFrom(file){
     const clean = (arr)=> (Array.isArray(arr)?arr:[]).filter(o=>o&&typeof o==="object"&&o.title).map(o=>({...o, id:String(o.id||uid())}));
     const items=clean(j.items), docs=clean(j.docs), notes=clean(j.notes);
     const byId=(cur,inc)=>{ const m=new Map(cur.map(x=>[x.id,x])); inc.forEach(x=>m.set(x.id,x)); return [...m.values()]; };
-    DB.items=byId(DB.items,items); DB.docs=byId(DB.docs,docs); DB.notes=byId(DB.notes,notes); DB.deals=byId(DB.deals||[],(Array.isArray(j.deals)?j.deals:[]).filter(o=>o&&typeof o==="object"&&o.title).map(o=>({...o,id:String(o.id||uid())}))); if(j.profile&&typeof j.profile==="object") DB.settings.profile={...prof(),...j.profile}; DB.jobs=byId(DB.jobs,(Array.isArray(j.jobs)?j.jobs:[]).filter(o=>o&&typeof o==="object"&&o.company).map(o=>({...o,id:String(o.id||uid())}))); DB.settings.onboarded=true;
+    DB.items=byId(DB.items,items); DB.docs=byId(DB.docs,docs); DB.notes=byId(DB.notes,notes); DB.deals=byId(DB.deals||[],(Array.isArray(j.deals)?j.deals:[]).filter(o=>o&&typeof o==="object"&&o.title).map(o=>({...o,id:String(o.id||uid())}))); if(j.profile&&typeof j.profile==="object") DB.settings.profile={...j.profile}; DB.jobs=byId(DB.jobs,(Array.isArray(j.jobs)?j.jobs:[]).filter(o=>o&&typeof o==="object"&&o.company).map(o=>({...o,id:String(o.id||uid())}))); DB.settings.onboarded=true;
     if(j.csp && typeof j.csp==="object" && /^\d{4}-\d{2}-\d{2}$/.test(j.csp.remise||"")) DB.settings.csp={remise:j.csp.remise, signature:j.csp.signature||null, solde:j.csp.solde||null, anc1an:j.csp.anc1an!==false}; persist(); closeSheet(); UI.tab="home"; render();
     toast(`${items.length} échéance(s) et ${docs.length} document(s) restaurés`);
   }catch(e){ toast("Ce fichier n'est pas une sauvegarde de Mon classeur."); } };
@@ -1690,13 +1550,15 @@ document.addEventListener("click", e=>{
   const scrim=e.target.closest("[data-scrim]"); if(scrim && e.target===scrim){ closeSheet(); return; }
   const b=e.target.closest("button"); if(!b) return;
   const ds=b.dataset;
-  if(ds.tab){ UI.tab=ds.tab; UI.q=""; if(ds.tab!=="home"&&ds.tab!=="docs") UI.dom="all"; render(); window.scrollTo(0,0); return; }
+  if(ds.tab){ if(ds.tab==="home"&&UI.tab==="home"){ UI.homeAll=false; UI.homeMore=false; } UI.tab=ds.tab; UI.q=""; if(ds.tab!=="home"&&ds.tab!=="docs") UI.dom="all"; render(); window.scrollTo(0,0); return; }
   if(ds.dom){ UI.dom=ds.dom; render(); return; }
   if(ds.seg){ UI.docSeg=ds.seg; render(); return; }
   if(ds.goto){ UI.domKey=ds.goto; UI.tab="domain"; UI.q=""; render(); window.scrollTo(0,0); return; }
   if(ds.sugg){ const k=UI.domKey, i=+ds.sugg.split("-").pop(), t=(DOMAIN_INFO[k]?.docs||[])[i]; if(t){ const kp=KEEP.find(r=>r[1]===t); const o=upsert("docs",{tpl:ds.sugg,title:t,domain:k,where:"",date:null,keep:kp?kp[2]:""}); render(); openDocForm(o); } return; }
   if(ds.scroll){ const el=document.getElementById(ds.scroll); if(el) el.scrollIntoView({behavior:"smooth",block:"start"}); return; }
+  if(ds.qdate){ const [id,n]=ds.qdate.split(":"); const t=today(); t.setDate(t.getDate()+Number(n)); const el=document.getElementById(id); if(el){ el.value=iso(t); el.dispatchEvent(new Event("change",{bubbles:true})); } return; }
   if(ds.done){ markDone(ds.done); return; }
+  if(ds.delDone){ const i=DB.items.findIndex(x=>x.id===ds.delDone); if(i>=0){ const it=DB.items[i]; DB.items.splice(i,1); persist(); render(); toast("Tâche supprimée", ()=>{ DB.items.splice(i,0,it); persist(); render(); }); } return; }
   if(ds.open){ openItemDetail(ds.open); return; }
   if(ds.doc){ openDocDetail(ds.doc); return; }
   if(ds.note){ openNoteDetail(ds.note); return; }
@@ -1704,16 +1566,8 @@ document.addEventListener("click", e=>{
   if(ds.wish){ toggleWish(ds.wish); return; }
   if(ds.wishEdit){ openWishForm(DB.items.find(x=>x.id===ds.wishEdit)); return; }
   if(ds.wtype){ UI.wType=ds.wtype; render(); return; }
-  if(ds.wishFromSugg){ const sg=SUGG.find(x=>x.id===ds.wishFromSugg); if(sg) wishFromDeal({key:"s:"+sg.id,title:sg.t,cat:sg.cat,start:sg.start,until:sg.until,url:sg.url}); return; }
-  if(ds.wishFromDeal){ const d=(DB.deals||[]).find(x=>x.id===ds.wishFromDeal); if(d) wishFromDeal({key:"d:"+d.id,title:d.title,cat:d.cat,start:d.start,until:d.end,url:d.url}); return; }
-  if(ds.dseg){ UI.dealSeg=ds.dseg; UI.tab="deals"; render(); window.scrollTo(0,0); return; }
-  if(ds.dcat){ UI.dealCat=ds.dcat; render(); return; }
-  if(ds.suggSave){ const sg=SUGG.find(x=>x.id===ds.suggSave); if(sg){ const tmp=document.createElement("div"); tmp.innerHTML=sg.tx.replace(/<li>/g,"<li>• ").replace(/<\/li>/g,"\n</li>"); saveDeal({fromSugg:sg.id,title:sg.t,cat:sg.cat,place:sg.place,url:sg.url,start:sg.start||null,end:sg.until||null,note:(tmp.textContent||"").trim()+(sg.cav?"\n\n⚠ "+sg.cav:"")}); render(); toast("Gardé dans « Mes plans »"); } return; }
   if(ds.suggHide){ DB.settings.hiddenSugg=[...new Set([...(DB.settings.hiddenSugg||[]),ds.suggHide])]; persist(); render(); toast("Masqué"); return; }
-  if(ds.dealUsed){ const d=(DB.deals||[]).find(x=>x.id===ds.dealUsed); if(d){ const before={...d}; d.used=true; saveDeal(d); render(); toast("Noté, bien joué !", ()=>{ saveDeal(before); render(); }); } return; }
-  if(ds.dealEdit){ openDealForm((DB.deals||[]).find(x=>x.id===ds.dealEdit)); return; }
   if(ds.copy!==undefined){ const t=ds.copy; (navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>toast("Code copié")).catch(()=>toast("Copie impossible : sélectionne le code")); return; }
-  if(ds.pval!==undefined){ const g=b.parentElement.dataset.pgroup; const cur=new Set(prof()[g]||[]); cur.has(ds.pval)?cur.delete(ds.pval):cur.add(ds.pval); b.setAttribute("aria-pressed",String(cur.has(ds.pval))); saveProfile({[g]:[...cur]}); return; }
   if(ds.jst){ UI.jSt = UI.jSt===ds.jst ? "all" : ds.jst; render(); return; }
   if(ds.jcity){ UI.jCity=ds.jcity; render(); return; }
   if(ds.jmet){ UI.jMet=ds.jmet; render(); return; }
@@ -1722,6 +1576,10 @@ document.addEventListener("click", e=>{
   if(ds.pick){ b.parentElement.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",String(x===b))); return; }
   if(ds.situ){ UI.situ.has(ds.situ)?UI.situ.delete(ds.situ):UI.situ.add(ds.situ); render(); return; }
   if(ds.onb==="next"){ UI.onbStep=1; render(); window.scrollTo(0,0); return; }
+  if(ds.onbPick){ const [k,v]=ds.onbPick.split(":"); UI.onb=UI.onb||{}; UI.onb[k]=v; if(k==="statut"&&!UI.onb.recherche&&isChomeur(v)) UI.onb.recherche="oui"; render(); return; }
+  if(ds.onb==="to2"){ UI.onbStep=2; render(); window.scrollTo(0,0); return; }
+  if(ds.onb==="to3"){ UI.onbStep=3; render(); window.scrollTo(0,0); return; }
+  if(ds.onb==="back"){ UI.onbStep=Math.max(1,UI.onbStep-1); render(); window.scrollTo(0,0); return; }
   if(ds.onb==="finish"){ finishOnboarding(true); return; }
   if(ds.onb==="skip"){ finishOnboarding(false); return; }
   if(b.hasAttribute("data-close")){ if(EDIT && EDIT.jobId && document.querySelector("#f-sub, #f-next")){ openJob(EDIT.jobId); return; } closeSheet(); return; }
@@ -1731,7 +1589,6 @@ document.addEventListener("click", e=>{
   if(ds.sheetAct==="save-csp"){ saveCsp(); return; }
   if(ds.sheetAct==="save-note"){ saveNoteForm(); return; }
   if(ds.sheetAct==="save-job"){ saveJobForm(); return; }
-  if(ds.sheetAct==="save-deal"){ saveDealForm(); return; }
   if(ds.sheetAct==="save-wish"){ saveWishForm(); return; }
   if(ds.sheetAct==="save-job-sub"){ saveJobSub(); return; }
   if(ds.sheetAct==="save-job-next"){ const j=DB.jobs.find(x=>x.id===EDIT.jobId); if(j){ j.next=$("#nx-date").value||null; j.nextLabel=picked("pk-next")||"Relancer"; saveJob(j); render(); openJob(j.id); toast(j.next?`Prévu le ${fmt(j.next)}`:"Action retirée"); } return; }
@@ -1746,9 +1603,6 @@ document.addEventListener("click", e=>{
     case "csp-setup": openCspSetup(); break;
     case "job-new": openJobForm(); break;
     case "wish-del": if(b.dataset.armed){ remove("items",EDIT.id); closeSheet(); render(); toast("Envie supprimée"); } else { b.dataset.armed="1"; b.textContent="Touche encore pour confirmer"; } break;
-    case "open-deals": UI.tab="deals"; render(); window.scrollTo(0,0); break;
-    case "deal-new": openDealForm(); break;
-    case "deal-del": if(b.dataset.armed){ const id=EDIT.id; DB.deals=DB.deals.filter(x=>x.id!==id); DB.items=DB.items.filter(x=>x.tpl!==`deal-${id}`); persist(); closeSheet(); render(); toast("Supprimé"); } else { b.dataset.armed="1"; b.textContent="Touche encore pour confirmer"; } break;
     case "sugg-unhide": DB.settings.hiddenSugg=[]; persist(); render(); break;
     case "job-edit": openJobForm(DB.jobs.find(x=>x.id===ds.id)); break;
     case "job-del": if(b.dataset.armed){ const id=EDIT.id; DB.jobs=DB.jobs.filter(x=>x.id!==id); DB.items=DB.items.filter(x=>x.jobId!==id); persist(); closeSheet(); render(); toast("Entreprise supprimée"); } else { b.dataset.armed="1"; b.textContent="Touche encore pour confirmer"; } break;
@@ -1772,14 +1626,18 @@ document.addEventListener("click", e=>{
     case "backup": closeSheet(); backup(); break;
     case "restore": case "restore-onb": $("#restore-file")?.click(); break;
     case "ics": exportICS(); break;
-    case "redo-onb": DB.settings.onboarded=false; UI.onbStep=1; UI.situ=new Set(); render(); window.scrollTo(0,0); break;
+    case "redo-onb": DB.settings.onboarded=false; UI.onbStep=1; UI.situ=new Set(); UI.onb={...profil()}; render(); window.scrollTo(0,0); break;
     case "wipe": confirmWipe(); break;
+    case "add-actu": { const t=TPL.find(x=>x.id==="actu"); DB.items.push({id:uid(),tpl:"actu",title:t.t,domain:"chomage",repeat:1,due:actuDue(),note:t.note,where:"",amount:"",updatedAt:iso(new Date())}); persist(); render(); toast("Rappel mensuel ajouté"); } break;
+    case "home-more": UI.homeMore=!UI.homeMore; render(); break;
+    case "home-all": UI.homeAll=true; render(); window.scrollTo(0,0); break;
+    case "home-simple": UI.homeAll=false; UI.homeMore=false; render(); window.scrollTo(0,0); break;
     case "wipe-yes": DB={items:[],docs:[],notes:[],jobs:[],deals:[],settings:{onboarded:false,lastBackup:null,csp:null,hideJobs:false}}; persist(); closeSheet(); UI.onbStep=0; render(); break;
   }
 });
-document.addEventListener("submit", e=>{ e.preventDefault(); if(e.target.id==="f-item") saveItemForm(); if(e.target.id==="f-doc") saveDocForm(); if(e.target.id==="f-csp") saveCsp(); if(e.target.id==="f-note") saveNoteForm(); if(e.target.id==="f-job") saveJobForm(); if(e.target.id==="f-deal") saveDealForm(); if(e.target.id==="f-wish") saveWishForm(); if(e.target.id==="f-wish-quick"){ const v=$("#wq").value.trim(); if(v){ addWish({title:v}); render(); setTimeout(()=>$("#wq")?.focus(),0); toast("Envie ajoutée"); } } if(e.target.id==="f-sub") saveJobSub(); });
+document.addEventListener("submit", e=>{ e.preventDefault(); if(e.target.id==="f-item") saveItemForm(); if(e.target.id==="f-doc") saveDocForm(); if(e.target.id==="f-csp") saveCsp(); if(e.target.id==="f-note") saveNoteForm(); if(e.target.id==="f-job") saveJobForm(); if(e.target.id==="f-wish") saveWishForm(); if(e.target.id==="f-wish-quick"){ const v=$("#wq").value.trim(); if(v){ addWish({title:v}); render(); setTimeout(()=>$("#wq")?.focus(),0); toast("Envie ajoutée"); } } if(e.target.id==="f-sub") saveJobSub(); });
 document.addEventListener("input", e=>{ if(e.target.id==="q"){ UI.q=e.target.value; render(); } if(e.target.id==="j-city-other" && e.target.value.trim()){ document.querySelectorAll("#pk-city button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.pick==="__other"))); } });
-document.addEventListener("change", e=>{ if(e.target.id==="p-birth"){ saveProfile({birth:e.target.value}); toast(e.target.value?"Mois de naissance enregistré":"Effacé"); return; } if(e.target.id==="set-jobs"){ DB.settings.hideJobs=!e.target.checked; persist(); render(); return; } if(e.target.id==="restore-file" && e.target.files[0]){ restoreFrom(e.target.files[0]); e.target.value=""; } });
+document.addEventListener("change", e=>{ if(e.target.id==="set-jobs"){ DB.settings.hideJobs=!e.target.checked; persist(); render(); return; } if(e.target.id==="restore-file" && e.target.files[0]){ restoreFrom(e.target.files[0]); e.target.value=""; } });
 document.addEventListener("keydown", e=>{ if(e.key==="Escape" && $("#sheet-root").innerHTML) closeSheet(); });
 document.addEventListener("visibilitychange", ()=>{ if(!document.hidden && DB.settings.onboarded) render(); });
 

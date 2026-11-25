@@ -1,6 +1,6 @@
 // Mon classeur — service worker : garde l'appli disponible hors ligne.
 // Change VERSION à chaque mise à jour des fichiers pour que les téléphones récupèrent la nouvelle version.
-const VERSION = "mon-classeur-v1.5.0";
+const VERSION = "mon-classeur-v1.8.0";
 const FILES = ["./", "./index.html", "./manifest.webmanifest", "./icons/icon-180.png", "./icons/icon-192.png", "./icons/icon-512.png"];
 
 self.addEventListener("install", e => {
